@@ -165,6 +165,9 @@ pub trait SoundSource {
     /// Sets the speed ratio (by adjusting the playback speed)
     fn set_pitch(&mut self, ratio: f32);
 
+    /// Gets the current speed ratio
+    fn pitch(&self) -> f32;
+
     /// Gets whether or not the source is set to repeat.
     fn repeat(&self) -> bool;
 
@@ -323,7 +326,7 @@ impl SoundSource for Source {
         if self.state.repeat {
             let sound = rodio::Decoder::new(cursor)?
                 .repeat_infinite()
-                .speed(self.state.speed)
+                // .speed(self.state.speed)
                 .fade_in(self.state.fade_in)
                 .periodic_access(self.state.query_interval, move |_| {
                     let _ = counter.fetch_add(period_mus, Ordering::SeqCst);
@@ -331,7 +334,7 @@ impl SoundSource for Source {
             self.sink.append(sound);
         } else {
             let sound = rodio::Decoder::new(cursor)?
-                .speed(self.state.speed)
+                // .speed(self.state.speed)
                 .fade_in(self.state.fade_in)
                 .periodic_access(self.state.query_interval, move |_| {
                     let _ = counter.fetch_add(period_mus, Ordering::SeqCst);
@@ -360,8 +363,11 @@ impl SoundSource for Source {
         self.state.set_fade_in(dur)
     }
     fn set_pitch(&mut self, ratio: f32) {
-        self.state.set_pitch(ratio);
+        // self.state.set_pitch(ratio);
         self.sink.set_speed(ratio)
+    }
+    fn pitch(&self) -> f32 {
+        self.sink.speed()
     }
     fn repeat(&self) -> bool {
         self.state.repeat()
@@ -387,6 +393,7 @@ impl SoundSource for Source {
 
         // We also need to carry over information from the previous sink.
         let volume = self.volume();
+        let pitch = self.pitch();
 
         let device = ctx.audio_context.device();
         self.sink = rodio::Sink::try_new(device)?;
@@ -394,6 +401,7 @@ impl SoundSource for Source {
 
         // Restore information from the previous link.
         self.set_volume(volume);
+        self.set_pitch(pitch);
         Ok(())
     }
 
@@ -493,7 +501,7 @@ impl SoundSource for SpatialSource {
         if self.state.repeat {
             let sound = rodio::Decoder::new(cursor)?
                 .repeat_infinite()
-                .speed(self.state.speed)
+                // .speed(self.state.speed)
                 .fade_in(self.state.fade_in)
                 .periodic_access(self.state.query_interval, move |_| {
                     let _ = counter.fetch_add(period_mus, Ordering::SeqCst);
@@ -501,7 +509,7 @@ impl SoundSource for SpatialSource {
             self.sink.append(sound);
         } else {
             let sound = rodio::Decoder::new(cursor)?
-                .speed(self.state.speed)
+                // .speed(self.state.speed)
                 .fade_in(self.state.fade_in)
                 .periodic_access(self.state.query_interval, move |_| {
                     let _ = counter.fetch_add(period_mus, Ordering::SeqCst);
@@ -538,7 +546,12 @@ impl SoundSource for SpatialSource {
     }
 
     fn set_pitch(&mut self, ratio: f32) {
-        self.state.set_pitch(ratio)
+        // self.state.set_pitch(ratio);
+        self.sink.set_speed(ratio)
+    }
+
+    fn pitch(&self) -> f32 {
+        self.sink.speed()
     }
 
     fn repeat(&self) -> bool {
