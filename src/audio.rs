@@ -360,7 +360,8 @@ impl SoundSource for Source {
         self.state.set_fade_in(dur)
     }
     fn set_pitch(&mut self, ratio: f32) {
-        self.state.set_pitch(ratio)
+        self.state.set_pitch(ratio);
+        self.sink.set_speed(ratio)
     }
     fn repeat(&self) -> bool {
         self.state.repeat()
