@@ -49,7 +49,7 @@ old_school_gfx_glutin_ext = "0.27"
 glutin = "0.27"
 winit = "0.25"
 image = {version = "0.23", default-features = false, features = ["gif", "png", "pnm", "tga", "tiff", "webp", "bmp", "dxt", ] }
-rodio = { git = "https://github.com/PieKing1215/rodio", branch = "control_speed", default-features = false, features = ["symphonia-all"] }
+rodio = { git = "https://github.com/PieKing1215/rodio", branch = "fix-ogg", default-features = false, features = ["symphonia-all"] }
 serde = "1"
 serde_derive = "1"
 toml = "0.5"
